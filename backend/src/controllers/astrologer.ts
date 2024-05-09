@@ -1,9 +1,43 @@
 import { Request, Response } from "express";
+import Astrologer from "../models/astrologer";
 
-export const register = async (req: Request, res: Response) => {};
+export const register = async (req: Request, res: Response) => {
+  const newAstro = new Astrologer(req.body);
+  try {
+    const savedAstro = await newAstro.save();
+    res.status(200).json(savedAstro);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+};
 
-export const update = async (req: Request, res: Response) => {};
+export const update = async (req: Request, res: Response) => {
+  try {
+    const updatedAstro = await Astrologer.findByIdAndUpdate(
+      req.params.id,
+      { $set: req.body },
+      { new: true }
+    );
+    res.status(200).json(updatedAstro);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+};
 
-export const deleteOne = async (req: Request, res: Response) => {};
+export const deleteOne = async (req: Request, res: Response) => {
+  try {
+    const updatedUser = await Astrologer.findByIdAndDelete(req.params.id);
+    res.status(200).json(updatedUser);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+};
 
-export const getAll = async (req: Request, res: Response) => {};
+export const getAll = async (req: Request, res: Response) => {
+  try {
+    const astrologers = await Astrologer.find();
+    res.status(200).json(astrologers);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+};
