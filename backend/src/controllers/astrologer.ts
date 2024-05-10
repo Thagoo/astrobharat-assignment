@@ -3,6 +3,7 @@ import Astrologer from "../models/astrologer";
 
 export const register = async (req: Request, res: Response) => {
   const newAstro = new Astrologer(req.body);
+
   try {
     const savedAstro = await newAstro.save();
     res.status(200).json(savedAstro);
@@ -18,6 +19,7 @@ export const update = async (req: Request, res: Response) => {
       { $set: req.body },
       { new: true }
     );
+
     res.status(200).json(updatedAstro);
   } catch (err) {
     res.status(500).json(err);
@@ -28,6 +30,15 @@ export const deleteOne = async (req: Request, res: Response) => {
   try {
     const updatedUser = await Astrologer.findByIdAndDelete(req.params.id);
     res.status(200).json(updatedUser);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+};
+
+export const getOne = async (req: Request, res: Response) => {
+  try {
+    const astrologer = await Astrologer.findById(req.params.id);
+    res.status(200).json(astrologer);
   } catch (err) {
     res.status(500).json(err);
   }
