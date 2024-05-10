@@ -1,8 +1,9 @@
 import dotenv from "dotenv";
 import express from "express";
 import mongoose from "mongoose";
-
+import cors from "cors";
 import astrologerRoute from "./routes/astrologer";
+
 // ENV
 dotenv.config();
 const PORT = process.env.PORT;
@@ -24,7 +25,7 @@ mongoose.connection.on("disconnected" as string | "error" as string, (err) => {
 
 const app = express();
 app.use(express.json());
-
+app.use(cors());
 app.use("/api/astrologers", astrologerRoute);
 
 app.listen(PORT, () => {
