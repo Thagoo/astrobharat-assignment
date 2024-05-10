@@ -9,27 +9,30 @@ export const astrologerApi = createApi({
     baseUrl: "http://localhost:4000/api/",
   }),
   endpoints: (builder) => ({
-    getAstrologers: builder.query<Astrologer, string>({
+    getAstrologers: builder.query<Astrologer[], void>({
       query: () => `astrologers`,
     }),
-    registerAstrologer: builder.query<Astrologer, string>({
+    getAstrologerById: builder.query<Astrologer, string>({
+      query: (id) => `astrologers/${id}`,
+    }),
+    registerAstrologer: builder.mutation<string, Astrologer>({
       query: (data) => ({
         url: `astrologers/register`,
         method: "POST",
-        body: { data },
+        body: data,
       }),
     }),
-    updateAstrologer: builder.query<
+    updateAstrologer: builder.mutation<
       any,
       { astrologerId: string; data: Astrologer }
     >({
       query: ({ astrologerId, data }) => ({
         url: `astrologers/${astrologerId}`,
         method: "PUT",
-        body: { data },
+        body: data,
       }),
     }),
-    deleteAstrologer: builder.query<any, { astrologerId: string }>({
+    deleteAstrologer: builder.mutation<any, string>({
       query: (astrologerId) => ({
         url: `astrologers/${astrologerId}`,
         method: "DELETE",
@@ -41,3 +44,7 @@ export const astrologerApi = createApi({
 // Export hooks for usage in functional components, which are
 // auto-generated based on the defined endpoints
 export const { useGetAstrologersQuery } = astrologerApi;
+export const { useGetAstrologerByIdQuery } = astrologerApi;
+export const { useRegisterAstrologerMutation } = astrologerApi;
+export const { useUpdateAstrologerMutation } = astrologerApi;
+export const { useDeleteAstrologerMutation } = astrologerApi;

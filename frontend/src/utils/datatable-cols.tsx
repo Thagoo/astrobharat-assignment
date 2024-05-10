@@ -1,15 +1,19 @@
+import { Avatar } from "@mui/material";
+
 export const astrologerColumns = [
-  { field: "_id", headerName: "ID", width: 150 },
+  { field: "_id", headerName: "ID", width: 220 },
   {
     field: "astrologer",
     headerName: "Astrologer",
     width: 150,
-    renderCell: (params) => {
+
+    renderCell: (params: any) => {
       return (
-        <div className="cellWithImg">
-          <img className="cellImg" src={params.row.img} alt="avatar" />
-          {params.row.username}
-        </div>
+        <Avatar
+          src={params.row.image}
+          alt={params.row.name}
+          sx={{ my: "2px" }}
+        />
       );
     },
   },
@@ -35,8 +39,8 @@ export const astrologerColumns = [
     width: 100,
   },
   {
-    field: "specialities",
-    headerName: "Specialities",
+    field: "specialties",
+    headerName: "Specialties",
     width: 120,
   },
 ];

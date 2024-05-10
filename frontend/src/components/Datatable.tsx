@@ -1,42 +1,46 @@
 import { DataGrid } from "@mui/x-data-grid";
-import { useLocation } from "react-router-dom";
-import { Link } from "react-router-dom";
-import { useContext, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
-import axios from "axios";
 import { Button, Container } from "@mui/material";
+import {
+  useDeleteAstrologerMutation,
+  useGetAstrologersQuery,
+} from "../redux/services/astrologer";
 
-const astrologerColumns = [
-  { field: "ID" },
-  { field: "Image" },
-  { field: "Name" },
-  { field: "Email" },
-  { field: "Gender" },
-  { field: "Languages" },
-  { field: "Specialities" },
-];
-const Datatable = () => {
-  const handleEdit = (id) => {
-    console.log(id);
+import { astrologerColumns } from "../utils/datatable-cols";
+
+function Datatable() {
+  const { data, error, isLoading, refetch } = useGetAstrologersQuery();
+  const [deleteAstrologer] = useDeleteAstrologerMutation();
+  const router = useNavigate();
+
+  const handleEdit = (id: string) => {
+    router(`/${id}`);
   };
-  const handleDelete = (id) => {
-    console.log(id);
+  const handleDelete = (id: string) => {
+    deleteAstrologer(id);
+    refetch();
   };
+
+  useEffect(() => {
+    refetch();
+  }, []);
+
   const actionColumn = [
     {
       field: "action",
       headerName: "Action",
       width: 200,
-      renderCell: (params) => {
+      renderCell: (params: any) => {
         return (
-          <div className="cellAction">
+          <div>
             <Button
               size="small"
               sx={{
                 boxShadow: `none`,
                 textTransform: `none`,
               }}
-              onClick={(e) => handleEdit(params.row.id)}
+              onClick={(e) => handleEdit(params.row._id)}
             >
               Edit
             </Button>
@@ -48,7 +52,7 @@ const Datatable = () => {
               }}
               variant="contained"
               size="small"
-              onClick={() => handleDelete(params.row.id)}
+              onClick={() => handleDelete(params.row._id)}
             >
               Delete
             </Button>
@@ -57,18 +61,17 @@ const Datatable = () => {
       },
     },
   ];
+
   return (
-    <DataGrid
-      columns={astrologerColumns.concat(actionColumn)}
-      rows={[
-        {
-          id: 1,
-          username: "@MUI",
-          age: 20,
-        },
-      ]}
-    />
+    <Container sx={{ height: "90vh" }}>
+      <DataGrid
+        loading={isLoading}
+        columns={astrologerColumns.concat(actionColumn)}
+        rows={data || []}
+        getRowId={(row) => row._id as string}
+      />
+    </Container>
   );
-};
+}
 
 export default Datatable;
