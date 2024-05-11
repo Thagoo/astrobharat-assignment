@@ -23,13 +23,17 @@ import { useRegisterAstrologerMutation } from "../redux/services/astrologer";
 import { Astrologer, LanguageOptions } from "../utils/types";
 import Navbar from "../components/Navbar";
 
+interface CustomError extends Error {
+  data?: any;
+}
+
 export default function RegisterForm() {
   const [selectedLanguages, setSelectedLanguages] = useState<LanguageOptions[]>(
     []
   );
   const [specialties, setSpecialties] = useState<string[]>([]);
-  const [file, setFile] = useState<File | null>(null);
-  const avatarRef = useRef<HTMLElement>(null);
+  const [file, setFile] = useState<any>(null);
+  const avatarRef = useRef<any>(null);
   const [formError, SetFormError] = useState<any>({});
   const [registerAstrologer, result] = useRegisterAstrologerMutation();
   const [loading, setLoading] = useState(false);
@@ -76,7 +80,8 @@ export default function RegisterForm() {
     }
     if (result.isError) {
       setLoading(false);
-      SetFormError(result.error?.data);
+      const error = result.error as CustomError;
+      SetFormError(error.data);
     }
   }, [result]);
 
@@ -118,7 +123,9 @@ export default function RegisterForm() {
                   <Avatar
                     sx={{ height: 150, width: 150 }}
                     src={
-                      file ? URL.createObjectURL(file) : <AccountCircleIcon />
+                      file
+                        ? URL.createObjectURL(file)
+                        : ((<AccountCircleIcon />) as any)
                     }
                     onClick={() =>
                       (avatarRef.current as HTMLInputElement).click()

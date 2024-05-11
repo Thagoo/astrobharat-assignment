@@ -40,7 +40,7 @@ export const update = async (req: Request, res: Response) => {
     );
 
     res.status(200).json(updatedAstro);
-  } catch (err) {
+  } catch (err: any) {
     console.log(err);
 
     if (err.code === 11000 || err.code === 11001) {

@@ -6,7 +6,7 @@ import type { Astrologer } from "../../utils/types";
 export const astrologerApi = createApi({
   reducerPath: "astrologerApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:4000/api/",
+    baseUrl: "api/",
   }),
   endpoints: (builder) => ({
     getAstrologers: builder.query<Astrologer[], void>({

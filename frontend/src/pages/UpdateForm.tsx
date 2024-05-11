@@ -28,12 +28,16 @@ import Navbar from "../components/Navbar";
 import { useParams } from "react-router-dom";
 import { languageOptions } from "../utils/languages";
 
+interface CustomError extends Error {
+  data?: any;
+}
+
 export default function UpdateForm() {
   const [selectedLanguages, setSelectedLanguages] = useState<LanguageOptions[]>(
     []
   );
   const [specialties, setSpecialties] = useState<string[]>([]);
-  const [file, setFile] = useState<Blob | null>(null);
+  const [file, setFile] = useState<any>(null);
   const avatarRef = useRef<any>(null);
   const { id } = useParams();
   const [formError, SetFormError] = useState<any>({});
@@ -86,7 +90,8 @@ export default function UpdateForm() {
     }
     if (result.isError) {
       setLoading(false);
-      SetFormError(result.error?.data);
+      const error = result.error as CustomError;
+      SetFormError(error.data);
     }
   }, [result]);
 
@@ -140,13 +145,11 @@ export default function UpdateForm() {
                   <Avatar
                     sx={{ height: 150, width: 150 }}
                     src={
-                      file ? (
-                        URL.createObjectURL(file)
-                      ) : data?.image ? (
-                        data.image
-                      ) : (
-                        <AccountCircleIcon />
-                      )
+                      file
+                        ? URL.createObjectURL(file)
+                        : data?.image
+                          ? data.image
+                          : ((<AccountCircleIcon />) as any)
                     }
                     onClick={() =>
                       (avatarRef.current as HTMLInputElement).click()
