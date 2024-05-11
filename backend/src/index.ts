@@ -8,6 +8,7 @@ import astrologerRoute from "./routes/astrologer";
 dotenv.config();
 const PORT = process.env.PORT;
 const MONGODB_URL = process.env.MONGODB_URL;
+import path from "path";
 
 // MongoDB connection
 mongoose
@@ -27,6 +28,10 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 app.use("/api/astrologers", astrologerRoute);
+
+app.get("/*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../frontend/build", "index.html"));
+});
 
 app.listen(PORT, () => {
   console.log(`server started at ${PORT}`);
