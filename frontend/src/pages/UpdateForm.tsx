@@ -27,7 +27,6 @@ import { Astrologer, LanguageOptions } from "../utils/types";
 import Navbar from "../components/Navbar";
 import { useParams } from "react-router-dom";
 import { languageOptions } from "../utils/languages";
-import { unwrapResult } from "@reduxjs/toolkit";
 
 export default function UpdateForm() {
   const [selectedLanguages, setSelectedLanguages] = useState<LanguageOptions[]>(
@@ -38,6 +37,7 @@ export default function UpdateForm() {
   const avatarRef = useRef<any>(null);
   const { id } = useParams();
   const [formError, SetFormError] = useState<any>({});
+  const [loading, setLoading] = useState(false);
 
   const { data, isLoading, error } = useGetAstrologerByIdQuery(id as string);
   const [updateAstrologer, result] = useUpdateAstrologerMutation();
@@ -50,6 +50,7 @@ export default function UpdateForm() {
     try {
       let imageUrl = "";
       if (file) {
+        setLoading(true);
         const imageData = new FormData();
         imageData.append("file", file);
         imageData.append("upload_preset", "upload");
@@ -78,10 +79,13 @@ export default function UpdateForm() {
     }
   };
   useEffect(() => {
+    setLoading(result.isLoading);
     if (result.isSuccess) {
+      setLoading(false);
       alert("User updated successfully");
     }
     if (result.isError) {
+      setLoading(false);
       SetFormError(result.error?.data);
     }
   }, [result]);
@@ -242,7 +246,7 @@ export default function UpdateForm() {
                 fullWidth
                 variant="contained"
                 sx={{ mt: 3, mb: 2 }}
-                disabled={isLoading}
+                disabled={loading}
               >
                 Submit
               </Button>

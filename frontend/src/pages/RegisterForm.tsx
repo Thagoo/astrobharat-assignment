@@ -32,6 +32,7 @@ export default function RegisterForm() {
   const avatarRef = useRef<HTMLElement>(null);
   const [formError, SetFormError] = useState<any>({});
   const [registerAstrologer, result] = useRegisterAstrologerMutation();
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -41,6 +42,7 @@ export default function RegisterForm() {
     try {
       let imageUrl = "";
       if (file) {
+        setLoading(true);
         const imageData = new FormData();
         imageData.append("file", file);
         imageData.append("upload_preset", "upload");
@@ -67,10 +69,13 @@ export default function RegisterForm() {
   };
 
   useEffect(() => {
+    setLoading(result.isLoading);
     if (result.isSuccess) {
+      setLoading(false);
       alert("User registered successfully");
     }
     if (result.isError) {
+      setLoading(false);
       SetFormError(result.error?.data);
     }
   }, [result]);
@@ -210,7 +215,7 @@ export default function RegisterForm() {
                 type="submit"
                 fullWidth
                 variant="contained"
-                disabled={result.isLoading}
+                disabled={loading}
                 sx={{ mt: 3, mb: 2 }}
               >
                 Submit
