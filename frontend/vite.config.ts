@@ -10,7 +10,7 @@ export default defineConfig({
   server: {
     port: 3000,
     proxy: {
-      "/api": "https://localhost:4000/",
+      "/api": "https://astrobharat-assignment.onrender.com/",
     },
   },
   plugins: [
