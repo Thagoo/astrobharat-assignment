@@ -1,7 +1,13 @@
 import { Request, Response } from "express";
 import Astrologer from "../models/astrologer";
+import { astrologerSchema } from "../utils/validations";
 
 export const register = async (req: Request, res: Response) => {
+  const validateData = astrologerSchema.safeParse(req.body);
+  if (!validateData.success) {
+    res.status(500).json(validateData.error.flatten().fieldErrors);
+    return;
+  }
   const newAstro = new Astrologer(req.body);
 
   try {
@@ -13,6 +19,11 @@ export const register = async (req: Request, res: Response) => {
 };
 
 export const update = async (req: Request, res: Response) => {
+  const validateData = astrologerSchema.safeParse(req.body);
+  if (!validateData.success) {
+    res.status(500).json(validateData.error.flatten().fieldErrors);
+    return;
+  }
   try {
     const updatedAstro = await Astrologer.findByIdAndUpdate(
       req.params.id,
