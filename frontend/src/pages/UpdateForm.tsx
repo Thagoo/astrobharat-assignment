@@ -140,10 +140,10 @@ export default function UpdateForm() {
                   <Avatar
                     sx={{ height: 150, width: 150 }}
                     src={
-                      data?.image ? (
-                        data?.image
-                      ) : file ? (
+                      file ? (
                         URL.createObjectURL(file)
+                      ) : data?.image ? (
+                        data.image
                       ) : (
                         <AccountCircleIcon />
                       )
