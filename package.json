@@ -12,7 +12,8 @@
     "prettier": "prettier --write .",
     "build:backend": "tsc",
     "build:frontend": "npm run build --prefix ./frontend",
-    "build": "tsc && npm run build:frontend"
+    "build": "tsc && npm run build:frontend",
+    "start": "npm run backend"
   },
   "license": "MIT",
   "dependencies": {
