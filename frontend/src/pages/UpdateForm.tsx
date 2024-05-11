@@ -8,7 +8,14 @@ import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
-import { FormLabel, Paper, Radio, RadioGroup } from "@mui/material";
+import {
+  FormControl,
+  FormHelperText,
+  FormLabel,
+  Paper,
+  Radio,
+  RadioGroup,
+} from "@mui/material";
 import LanguageSelector from "../components/LanguageSelector";
 import SpecialtySelector from "../components/Specialties";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
@@ -20,6 +27,7 @@ import { Astrologer, LanguageOptions } from "../utils/types";
 import Navbar from "../components/Navbar";
 import { useParams } from "react-router-dom";
 import { languageOptions } from "../utils/languages";
+import { unwrapResult } from "@reduxjs/toolkit";
 
 export default function UpdateForm() {
   const [selectedLanguages, setSelectedLanguages] = useState<LanguageOptions[]>(
@@ -29,9 +37,10 @@ export default function UpdateForm() {
   const [file, setFile] = useState<Blob | null>(null);
   const avatarRef = useRef<any>(null);
   const { id } = useParams();
+  const [formError, SetFormError] = useState<any>({});
 
   const { data, isLoading, error } = useGetAstrologerByIdQuery(id as string);
-  const [updateAstrologer] = useUpdateAstrologerMutation();
+  const [updateAstrologer, result] = useUpdateAstrologerMutation();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -60,18 +69,22 @@ export default function UpdateForm() {
         image: imageUrl,
       };
 
-      const response = await updateAstrologer({
+      updateAstrologer({
         astrologerId: id as string,
         data: updateUser,
       });
-
-      if (response.data) {
-        alert("Astrologer updated");
-      }
     } catch (error) {
       console.log(error);
     }
   };
+  useEffect(() => {
+    if (result.isSuccess) {
+      alert("User updated successfully");
+    }
+    if (result.isError) {
+      SetFormError(result.error?.data);
+    }
+  }, [result]);
 
   useEffect(() => {
     if (!isLoading) {
@@ -146,6 +159,9 @@ export default function UpdateForm() {
                     label=" Name"
                     autoFocus
                     defaultValue={data?.name}
+                    error={formError.name}
+                    helperText={formError.name}
+                    onChange={() => SetFormError("")}
                   />
                 </Grid>
 
@@ -158,6 +174,9 @@ export default function UpdateForm() {
                     name="email"
                     autoComplete="email"
                     defaultValue={data?.email}
+                    error={formError.email}
+                    helperText={formError.email}
+                    onChange={() => SetFormError("")}
                   />
                 </Grid>
 
@@ -170,6 +189,7 @@ export default function UpdateForm() {
                     aria-labelledby="demo-radio-buttons-group-label"
                     defaultValue={data?.gender}
                     name="gender"
+                    onChange={() => SetFormError("")}
                   >
                     <FormControlLabel
                       value="female"
@@ -186,19 +206,34 @@ export default function UpdateForm() {
                       control={<Radio />}
                       label="Other"
                     />
+                    <FormControl error={formError.gender} variant="standard">
+                      <FormHelperText id="component-error-text">
+                        {formError.gender}
+                      </FormHelperText>
+                    </FormControl>
                   </RadioGroup>
                 </Grid>
-                <Grid item xs={12}>
+                <Grid item xs={12} onChange={() => SetFormError("")}>
                   <LanguageSelector
                     selectedLanguages={selectedLanguages}
                     setSelectedLanguages={setSelectedLanguages}
                   />
+                  <FormControl error={formError.languages} variant="standard">
+                    <FormHelperText id="component-error-text">
+                      {formError.languages}
+                    </FormHelperText>
+                  </FormControl>
                 </Grid>
-                <Grid item xs={12}>
+                <Grid item xs={12} onChange={() => SetFormError("")}>
                   <SpecialtySelector
                     specialties={specialties}
                     setSpecialties={setSpecialties}
                   />
+                  <FormControl error={formError.specialties} variant="standard">
+                    <FormHelperText id="component-error-text">
+                      {formError.specialties}
+                    </FormHelperText>
+                  </FormControl>
                 </Grid>
               </Grid>
 
