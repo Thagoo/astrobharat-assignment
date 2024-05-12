@@ -29,7 +29,7 @@ const SpecialtySelector = ({
   };
 
   const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === " ") {
+    if (event.key === "Enter" || event.key === " ") {
       handleAddSpecialty();
     }
   };
@@ -37,7 +37,7 @@ const SpecialtySelector = ({
   return (
     <Stack spacing={2}>
       <TextField
-        label="Enter specialties (separated by space)"
+        label="Enter specialties (separated by comma)"
         value={inputValue}
         onChange={handleInputChange}
         onKeyPress={handleKeyPress}
