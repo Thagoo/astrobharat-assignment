@@ -8,6 +8,7 @@ import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
+import { LoadingButton } from "@mui/lab";
 import {
   FormControl,
   FormHelperText,
@@ -15,6 +16,7 @@ import {
   Paper,
   Radio,
   RadioGroup,
+  Snackbar,
 } from "@mui/material";
 import LanguageSelector from "../components/LanguageSelector";
 import SpecialtySelector from "../components/Specialties";
@@ -42,10 +44,14 @@ export default function UpdateForm() {
   const { id } = useParams();
   const [formError, SetFormError] = useState<any>({});
   const [loading, setLoading] = useState(false);
+  const [snackbar, setSnackbar] = useState(false);
 
   const { data, isLoading, error } = useGetAstrologerByIdQuery(id as string);
   const [updateAstrologer, result] = useUpdateAstrologerMutation();
 
+  const handleCloseSnackbar = () => {
+    setSnackbar(false);
+  };
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
@@ -84,12 +90,11 @@ export default function UpdateForm() {
   };
   useEffect(() => {
     setLoading(result.isLoading);
+
     if (result.isSuccess) {
-      setLoading(false);
-      alert("User updated successfully");
+      setSnackbar(result.isSuccess);
     }
     if (result.isError) {
-      setLoading(false);
       const error = result.error as CustomError;
       SetFormError(error.data);
     }
@@ -112,6 +117,12 @@ export default function UpdateForm() {
       {" "}
       <Navbar />
       <Container component="main" maxWidth="sm">
+        <Snackbar
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
+          open={snackbar}
+          onClose={handleCloseSnackbar}
+          message="User updated successfully"
+        />
         <Paper sx={{ px: 2 }}>
           <CssBaseline />
           <Box
@@ -244,15 +255,15 @@ export default function UpdateForm() {
                 </Grid>
               </Grid>
 
-              <Button
+              <LoadingButton
                 type="submit"
                 fullWidth
                 variant="contained"
                 sx={{ mt: 3, mb: 2 }}
-                disabled={loading}
+                loading={loading}
               >
                 Submit
-              </Button>
+              </LoadingButton>
             </Box>
           </Box>
         </Paper>

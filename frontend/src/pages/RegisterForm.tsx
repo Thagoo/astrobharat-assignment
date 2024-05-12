@@ -15,6 +15,7 @@ import {
   Paper,
   Radio,
   RadioGroup,
+  Snackbar,
 } from "@mui/material";
 import LanguageSelector from "../components/LanguageSelector";
 import SpecialtySelector from "../components/Specialties";
@@ -22,6 +23,7 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { useRegisterAstrologerMutation } from "../redux/services/astrologer";
 import { Astrologer, LanguageOptions } from "../utils/types";
 import Navbar from "../components/Navbar";
+import { LoadingButton } from "@mui/lab";
 
 interface CustomError extends Error {
   data?: any;
@@ -38,6 +40,11 @@ export default function RegisterForm() {
   const [registerAstrologer, result] = useRegisterAstrologerMutation();
   const [loading, setLoading] = useState(false);
 
+  const [snackbar, setSnackbar] = useState(false);
+
+  const handleCloseSnackbar = () => {
+    setSnackbar(false);
+  };
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
@@ -74,12 +81,11 @@ export default function RegisterForm() {
 
   useEffect(() => {
     setLoading(result.isLoading);
+
     if (result.isSuccess) {
-      setLoading(false);
-      alert("User registered successfully");
+      setSnackbar(result.isSuccess);
     }
     if (result.isError) {
-      setLoading(false);
       const error = result.error as CustomError;
       SetFormError(error.data);
     }
@@ -87,7 +93,12 @@ export default function RegisterForm() {
 
   return (
     <Box>
-      {" "}
+      <Snackbar
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        open={snackbar}
+        onClose={handleCloseSnackbar}
+        message="User registered successfully"
+      />{" "}
       <Navbar />
       <Container component="main" maxWidth="sm">
         <Paper sx={{ px: 2 }}>
@@ -218,15 +229,15 @@ export default function RegisterForm() {
                 </Grid>
               </Grid>
 
-              <Button
+              <LoadingButton
                 type="submit"
                 fullWidth
                 variant="contained"
-                disabled={loading}
                 sx={{ mt: 3, mb: 2 }}
+                loading={loading}
               >
                 Submit
-              </Button>
+              </LoadingButton>
             </Box>
           </Box>
         </Paper>
